@@ -4,7 +4,7 @@ import { Home, Users, UserPlus, FileText, Settings, HelpCircle } from 'lucide-re
 const navItems = [
   { icon: Home, label: 'Dashboard', href: '/dashboard' },
   { icon: Users, label: 'Clients', href: '/dashboard/clients' },
-  { icon: UserPlus, label: 'New Client', href: '/dashboard/clients' },
+  { icon: UserPlus, label: 'New Client', href: '/dashboard/clients/new' },
   { icon: FileText, label: 'Reports', href: '/dashboard/reports' },
   { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
   { icon: HelpCircle, label: 'Help', href: '/dashboard/help' },
