@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, X } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
@@ -18,38 +18,14 @@ import { AddProfileForm } from './components/add-profile-form'
 import { formSchema } from './schema'
 import type { ProfileData } from '@/app/types'
 import type { z } from 'zod'
+import { getProfiles } from '../../../lib/profiles'
 
 export default function ClientsPage() {
-  const [profiles, setProfiles] = useState<ProfileData[]>([
-    {
-      id: 1,
-      type: 'client',
-      fullName: 'John Doe',
-      intakeDate: new Date(2023, 0, 1),
-      clientSummary: 'Long-term care patient',
-      team: {
-        caseWorker: 'Alice Johnson',
-        nurse: 'Emily White',
-        attorney: 'Robert Smith'
-      }
-    },
-    {
-      id: 2,
-      type: 'caseWorker',
-      fullName: 'Alice Johnson',
-      title: 'Senior Case Worker',
-      email: 'alice@example.com',
-      phone: '(555) 123-4567'
-    },
-    {
-      id: 3,
-      type: 'nurse',
-      fullName: 'Emily White',
-      title: 'RN',
-      email: 'emily@example.com',
-      phone: '(555) 234-5678'
-    }
-  ])
+  const [profiles, setProfiles] = useState<ProfileData[]>([])
+
+  useEffect(() => {
+    setProfiles(getProfiles())
+  }, [])
 
   const [open, setOpen] = useState(false)
   const [formType, setFormType] = useState<z.infer<typeof formSchema>['type']>('client')
@@ -67,14 +43,16 @@ export default function ClientsPage() {
       medNeeds: values.type === 'client' ? values.medNeeds : undefined,
       team: values.type === 'client' ? values.team : undefined
     }
-    setProfiles([...profiles, newProfile])
+    const updatedProfiles = [...profiles, newProfile]
+    setProfiles(updatedProfiles)
+    localStorage.setItem('profiles', JSON.stringify(updatedProfiles))
     setOpen(false)
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Client Team</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Client</h1>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>

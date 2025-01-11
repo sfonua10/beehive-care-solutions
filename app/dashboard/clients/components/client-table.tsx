@@ -1,12 +1,15 @@
 import { format } from 'date-fns'
 import { ProfileData } from '@/app/types'
 import { cn } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
 
 interface ClientTableProps {
   profiles: ProfileData[]
 }
 
 export function ClientTable({ profiles }: ClientTableProps) {
+  const router = useRouter()
+
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden border border-amber-100">
       <table className="min-w-full divide-y divide-amber-200">
@@ -21,7 +24,11 @@ export function ClientTable({ profiles }: ClientTableProps) {
         </thead>
         <tbody className="bg-white divide-y divide-amber-100">
           {profiles.map((profile) => (
-            <tr key={profile.id} className="hover:bg-amber-50 transition-colors duration-200">
+            <tr 
+              key={profile.id} 
+              className="hover:bg-amber-50 transition-colors duration-200 cursor-pointer" 
+              onClick={() => router.push(`/dashboard/clients/${profile.id}`)}
+            >
               <td className="px-6 py-4 whitespace-nowrap text-sm">
                 <span className={cn(
                   "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",

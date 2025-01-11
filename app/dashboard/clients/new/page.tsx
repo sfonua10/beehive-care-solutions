@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -25,6 +26,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { addProfile } from '../../../lib/profiles'
+import { ProfileData } from '@/app/types'
 
 const formSchema = z.object({
   type: z.enum(['client', 'caseWorker', 'nurse', 'attorney']),
@@ -42,6 +45,7 @@ const formSchema = z.object({
 })
 
 export default function NewProfilePage() {
+  const router = useRouter()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,8 +57,21 @@ export default function NewProfilePage() {
   const userType = form.watch('type')
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
-    // TODO: Implement API call to save profile
+    const newProfile: ProfileData = {
+      id: 0, // Will be set in addProfile
+      type: values.type,
+      fullName: values.fullName,
+      title: values.title,
+      email: values.email,
+      phone: values.phone,
+      intakeDate: values.type === 'client' ? values.intakeDate : undefined,
+      clientSummary: values.type === 'client' ? values.clientSummary : undefined,
+      medNeeds: values.type === 'client' ? values.medNeeds : undefined,
+      team: values.type === 'client' ? values.team : undefined
+    }
+    
+    addProfile(newProfile)
+    router.push('/dashboard/clients')
   }
 
   return (

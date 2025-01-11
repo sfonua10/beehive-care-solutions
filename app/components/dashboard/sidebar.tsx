@@ -1,5 +1,19 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
-import { Home, Users, UserPlus, FileText, Settings, HelpCircle } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { 
+  Home, 
+  Users, 
+  UserPlus, 
+  FileText, 
+  Settings, 
+  HelpCircle,
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const navItems = [
   { icon: Home, label: 'Dashboard', href: '/dashboard' },
@@ -11,24 +25,75 @@ const navItems = [
 ]
 
 export default function Sidebar() {
+  const pathname = usePathname()
+  const [collapsed, setCollapsed] = useState(false)
+
   return (
-    <div className="flex flex-col w-64 bg-white border-r border-amber-100 shadow-lg">
-      <div className="flex items-center justify-center h-20 border-b border-amber-100">
-        <h1 className="text-3xl font-bold text-amber-600">BeeHive Care</h1>
+    <div
+      className={cn(
+        "flex flex-col bg-white border-r border-amber-100 shadow-lg transition-all duration-300",
+        collapsed ? "w-16" : "w-64"
+      )}
+    >
+      {/* Header with collapse button */}
+      <div
+        className={cn(
+          "flex items-center h-20 border-b border-amber-100",
+          collapsed ? "justify-center" : "justify-between px-6"
+        )}
+      >
+        {!collapsed && (
+          <h1 className="text-2xl font-bold text-amber-600">
+            BeeHive Care
+          </h1>
+        )}
+        <button
+          type="button"
+          className="p-2 rounded hover:bg-amber-50 transition-colors"
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          {collapsed ? (
+            <ChevronRight className="h-5 w-5 text-amber-600" />
+          ) : (
+            <ChevronLeft className="h-5 w-5 text-amber-600" />
+          )}
+        </button>
       </div>
+
+      {/* Navigation */}
       <nav className="flex-grow">
         <ul className="flex flex-col py-4">
-          {navItems.map((item) => (
-            <li key={item.label}>
-              <Link href={item.href} className="flex items-center px-6 py-3 text-gray-700 hover:bg-amber-50 transition-colors duration-200">
-                <item.icon className="h-5 w-5 mr-3 text-amber-600" />
-                {item.label}
-              </Link>
-            </li>
-          ))}
+          {navItems.map((item) => {
+            const isActive = pathname === item.href
+            return (
+              <li key={item.label}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "flex items-center py-3 transition-colors duration-200",
+                    // Adjust padding to handle the smaller/collapsed state
+                    collapsed ? "px-4 justify-center" : "px-6",
+                    isActive
+                      ? "bg-amber-50 text-amber-900"
+                      : "text-gray-700 hover:bg-amber-50"
+                  )}
+                >
+                  <item.icon
+                    className={cn(
+                      "mr-3 h-5 w-5 text-gray-400 transition-colors duration-200",
+                      isActive ? "text-amber-600" : "",
+                      // If collapsed, remove the right margin
+                      collapsed && "mr-0"
+                    )}
+                  />
+                  {/* Label is hidden when collapsed */}
+                  {!collapsed && <span>{item.label}</span>}
+                </Link>
+              </li>
+            )
+          })}
         </ul>
       </nav>
     </div>
   )
 }
-
