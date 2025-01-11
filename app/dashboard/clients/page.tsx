@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -44,22 +44,6 @@ export default function ClientsPage() {
     attorney: ''
   })
 
-  const [open, setOpen] = useState(false)
-  const [isFormDirty, setIsFormDirty] = useState(false)
-
-  useEffect(() => {
-    // Check if any field has been modified
-    const isDirty = 
-      newClient.fullName !== '' ||
-      newClient.dob !== undefined ||
-      newClient.intakeDate !== undefined ||
-      newClient.caseWorker !== '' ||
-      newClient.nurse !== '' ||
-      newClient.attorney !== ''
-    
-    setIsFormDirty(isDirty)
-  }, [newClient])
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setNewClient(prev => ({ ...prev, [name]: value }))
@@ -82,14 +66,13 @@ export default function ClientsPage() {
       nurse: '',
       attorney: ''
     })
-    setOpen(false) // Close dialog after save
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Clients</h1>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <h1 className="text-3xl font-bold text-gray-900">Clients</h1>
+        <Dialog>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" /> Add New Client
@@ -111,6 +94,7 @@ export default function ClientsPage() {
                   value={newClient.fullName}
                   onChange={handleInputChange}
                   required
+                  className="border-amber-200 focus:border-amber-400 focus:ring-amber-400"
                 />
               </div>
               <div>
@@ -164,6 +148,7 @@ export default function ClientsPage() {
                   name="caseWorker"
                   value={newClient.caseWorker}
                   onChange={handleInputChange}
+                  className="border-amber-200 focus:border-amber-400 focus:ring-amber-400"
                 />
               </div>
               <div>
@@ -173,6 +158,7 @@ export default function ClientsPage() {
                   name="nurse"
                   value={newClient.nurse}
                   onChange={handleInputChange}
+                  className="border-amber-200 focus:border-amber-400 focus:ring-amber-400"
                 />
               </div>
               <div>
@@ -182,40 +168,35 @@ export default function ClientsPage() {
                   name="attorney"
                   value={newClient.attorney}
                   onChange={handleInputChange}
+                  className="border-amber-200 focus:border-amber-400 focus:ring-amber-400"
                 />
               </div>
-              <Button 
-                type="submit" 
-                disabled={!isFormDirty}
-                className="w-full"
-              >
-                Save Client
-              </Button>
+              <Button type="submit">Save Client</Button>
             </form>
           </DialogContent>
         </Dialog>
       </div>
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="bg-white shadow-md rounded-lg overflow-hidden border border-amber-100">
+        <table className="min-w-full divide-y divide-amber-200">
+          <thead className="bg-amber-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Birth</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Intake Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Case Worker</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nurse</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attorney</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-amber-700 uppercase tracking-wider">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-amber-700 uppercase tracking-wider">Date of Birth</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-amber-700 uppercase tracking-wider">Intake Date</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-amber-700 uppercase tracking-wider">Case Worker</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-amber-700 uppercase tracking-wider">Nurse</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-amber-700 uppercase tracking-wider">Attorney</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-amber-100">
             {clients.map((client) => (
-              <tr key={client.id}>
-                <td className="px-6 py-4 whitespace-nowrap">{client.fullName}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{client.dob ? format(client.dob, "PPP") : 'N/A'}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{client.intakeDate ? format(client.intakeDate, "PPP") : 'N/A'}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{client.caseWorker}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{client.nurse}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{client.attorney}</td>
+              <tr key={client.id} className="hover:bg-amber-50 transition-colors duration-200">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{client.fullName}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{client.dob ? format(client.dob, "PPP") : 'N/A'}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{client.intakeDate ? format(client.intakeDate, "PPP") : 'N/A'}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{client.caseWorker}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{client.nurse}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{client.attorney}</td>
               </tr>
             ))}
           </tbody>

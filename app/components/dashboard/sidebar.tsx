@@ -1,65 +1,34 @@
-'use client'
-
-import { useState } from 'react'
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { 
-  ChevronLeft, 
-  ChevronRight,
-  LayoutDashboard,
-  Users,
-  Calendar,
-  Settings
-} from 'lucide-react'
+import { Home, Users, UserPlus, FileText, Settings, HelpCircle } from 'lucide-react'
 
-const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false)
+const navItems = [
+  { icon: Home, label: 'Dashboard', href: '/dashboard' },
+  { icon: Users, label: 'Clients', href: '/dashboard/clients' },
+  { icon: UserPlus, label: 'New Client', href: '/dashboard/clients' },
+  { icon: FileText, label: 'Reports', href: '/dashboard/reports' },
+  { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
+  { icon: HelpCircle, label: 'Help', href: '/dashboard/help' },
+]
 
-  const handleToggle = () => setCollapsed(!collapsed)
-
-  const menuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
-    { icon: Users, label: 'Clients', href: '/dashboard/clients' },
-    { icon: Calendar, label: 'Schedule', href: '/dashboard/schedule' },
-    { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
-  ]
-
+export default function Sidebar() {
   return (
-    <div
-      className={cn(
-        'bg-white shadow-sm relative transition-all duration-300 ease-in-out',
-        collapsed ? 'w-16' : 'w-64'
-      )}
-    >
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute -right-3 top-4 z-10 rounded-full bg-white shadow-md"
-        onClick={handleToggle}
-        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-      >
-        {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-      </Button>
-
-      <nav className="p-4 space-y-2">
-        {menuItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              'flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors',
-              collapsed && 'justify-center'
-            )}
-          >
-            <item.icon className="h-5 w-5 text-gray-500" />
-            {!collapsed && <span className="text-sm font-medium">{item.label}</span>}
-          </Link>
-        ))}
+    <div className="flex flex-col w-64 bg-white border-r border-amber-100 shadow-lg">
+      <div className="flex items-center justify-center h-20 border-b border-amber-100">
+        <h1 className="text-3xl font-bold text-amber-600">BeeHive Care</h1>
+      </div>
+      <nav className="flex-grow">
+        <ul className="flex flex-col py-4">
+          {navItems.map((item) => (
+            <li key={item.label}>
+              <Link href={item.href} className="flex items-center px-6 py-3 text-gray-700 hover:bg-amber-50 transition-colors duration-200">
+                <item.icon className="h-5 w-5 mr-3 text-amber-600" />
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </nav>
     </div>
   )
 }
-
-export default Sidebar
 
