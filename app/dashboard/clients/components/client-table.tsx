@@ -1,7 +1,10 @@
+'use client'
+
 import { format } from 'date-fns'
 import { ProfileData } from '@/app/types'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
+import { useSidebar } from '@/app/hooks/use-sidebar'
 
 interface ClientTableProps {
   profiles: ProfileData[]
@@ -9,6 +12,12 @@ interface ClientTableProps {
 
 export function ClientTable({ profiles }: ClientTableProps) {
   const router = useRouter()
+  const { close } = useSidebar()
+
+  const handleRowClick = (profileId: number) => {
+    close()
+    router.push(`/dashboard/clients/${profileId}`)
+  }
 
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden border border-amber-100">
@@ -27,7 +36,7 @@ export function ClientTable({ profiles }: ClientTableProps) {
             <tr 
               key={profile.id} 
               className="hover:bg-amber-50 transition-colors duration-200 cursor-pointer" 
-              onClick={() => router.push(`/dashboard/clients/${profile.id}`)}
+              onClick={() => handleRowClick(profile.id)}
             >
               <td className="px-6 py-4 whitespace-nowrap text-sm">
                 <span className={cn(

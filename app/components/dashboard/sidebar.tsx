@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
@@ -9,11 +8,12 @@ import {
   UserPlus, 
   FileText, 
   Settings, 
-  HelpCircle,
+  HelpCircle, 
   ChevronLeft,
   ChevronRight
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useSidebar } from '@/app/hooks/use-sidebar'
 
 const navItems = [
   { icon: Home, label: 'Dashboard', href: '/dashboard' },
@@ -26,23 +26,22 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const [collapsed, setCollapsed] = useState(false)
+  const { isOpen, toggle } = useSidebar()
 
   return (
     <div
       className={cn(
         "flex flex-col bg-white border-r border-amber-100 shadow-lg transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
+        isOpen ? "w-64" : "w-16"
       )}
     >
-      {/* Header with collapse button */}
       <div
         className={cn(
           "flex items-center h-20 border-b border-amber-100",
-          collapsed ? "justify-center" : "justify-between px-6"
+          isOpen ? "justify-between px-6" : "justify-center"
         )}
       >
-        {!collapsed && (
+        {isOpen && (
           <h1 className="text-2xl font-bold text-amber-600">
             BeeHive Care
           </h1>
@@ -50,17 +49,16 @@ export default function Sidebar() {
         <button
           type="button"
           className="p-2 rounded hover:bg-amber-50 transition-colors"
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={toggle}
         >
-          {collapsed ? (
-            <ChevronRight className="h-5 w-5 text-amber-600" />
-          ) : (
+          {isOpen ? (
             <ChevronLeft className="h-5 w-5 text-amber-600" />
+          ) : (
+            <ChevronRight className="h-5 w-5 text-amber-600" />
           )}
         </button>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-grow">
         <ul className="flex flex-col py-4">
           {navItems.map((item) => {
@@ -71,8 +69,7 @@ export default function Sidebar() {
                   href={item.href}
                   className={cn(
                     "flex items-center py-3 transition-colors duration-200",
-                    // Adjust padding to handle the smaller/collapsed state
-                    collapsed ? "px-4 justify-center" : "px-6",
+                    isOpen ? "px-6" : "px-4 justify-center",
                     isActive
                       ? "bg-amber-50 text-amber-900"
                       : "text-gray-700 hover:bg-amber-50"
@@ -80,14 +77,12 @@ export default function Sidebar() {
                 >
                   <item.icon
                     className={cn(
-                      "mr-3 h-5 w-5 text-gray-400 transition-colors duration-200",
-                      isActive ? "text-amber-600" : "",
-                      // If collapsed, remove the right margin
-                      collapsed && "mr-0"
+                      "h-5 w-5",
+                      isOpen ? "mr-3" : "mr-0",
+                      isActive ? "text-amber-600" : "text-gray-400"
                     )}
                   />
-                  {/* Label is hidden when collapsed */}
-                  {!collapsed && <span>{item.label}</span>}
+                  {isOpen && <span>{item.label}</span>}
                 </Link>
               </li>
             )
