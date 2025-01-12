@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, DM_Sans } from 'next/font/google';
 import "./globals.css";
+import { NotesProvider } from '@/lib/context/notes-context'
 
 const outfit = Outfit({ 
   subsets: ['latin'],
@@ -22,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${outfit.variable} ${dmSans.variable}`}>
       <body className="font-outfit bg-white text-gray-900 antialiased">
-        {children}
+        <NotesProvider>
+          {children}
+        </NotesProvider>
       </body>
     </html>
   );

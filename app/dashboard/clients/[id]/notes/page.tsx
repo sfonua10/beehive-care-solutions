@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -9,18 +9,14 @@ import { Textarea } from "@/components/ui/textarea"
 import { Download } from 'lucide-react'
 import { ProfileData } from '@/app/types'
 import { getProfiles } from '../../../../../lib/profiles'
-
-interface Note {
-  id: string
-  content: string
-  timestamp: Date
-}
+import { useNotes } from '@/lib/context/notes-context'
 
 export default function ClientNotesPage() {
   const params = useParams()
+  const router = useRouter()
   const [profile, setProfile] = useState<ProfileData | null>(null)
   const [newNote, setNewNote] = useState('')
-  const [notes, setNotes] = useState<Note[]>([])
+  const { notes, addNote } = useNotes()
 
   useEffect(() => {
     const profiles = getProfiles()
@@ -32,13 +28,7 @@ export default function ClientNotesPage() {
     e.preventDefault()
     if (!newNote.trim()) return
 
-    const note: Note = {
-      id: crypto.randomUUID(),
-      content: newNote.trim(),
-      timestamp: new Date()
-    }
-
-    setNotes(prev => [note, ...prev])
+    addNote(newNote.trim())
     setNewNote('')
   }
 
@@ -71,6 +61,16 @@ export default function ClientNotesPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => router.push(`/dashboard/clients/${params.id}`)}
+              className="hover:bg-amber-50"
+            >
+              ← Back to Profile
+            </Button>
+          </div>
           <h1 className="text-2xl font-bold text-gray-900">{profile.fullName}&apos;s Notes</h1>
           <p className="text-sm text-gray-500">Record and track daily observations, medications, and important events</p>
         </div>
@@ -90,7 +90,6 @@ export default function ClientNotesPage() {
         </div>
       </div>
 
-      {/* New Note Input */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Add New Note</CardTitle>
@@ -112,7 +111,6 @@ export default function ClientNotesPage() {
         </CardContent>
       </Card>
 
-      {/* Notes Timeline */}
       <div className="space-y-4">
         <h2 className="text-lg font-medium text-gray-900">Notes Timeline</h2>
         <div className="space-y-4">

@@ -8,10 +8,12 @@ import { ProfileData } from '@/app/types'
 import { getProfiles } from '../../../../lib/profiles'
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useNotes } from '@/lib/context/notes-context'
 
 export default function ClientProfilePage() {
   const params = useParams()
   const [profile, setProfile] = useState<ProfileData | null>(null)
+  const { notes } = useNotes()
 
   useEffect(() => {
     const profiles = getProfiles()
@@ -64,15 +66,20 @@ export default function ClientProfilePage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {/* Example Note - Will be replaced with real data */}
-              <div className="border-b border-gray-100 pb-3 last:border-0">
-                <p className="text-sm text-gray-900">Completed morning routine assessment.</p>
-                <span className="text-xs text-gray-500">{format(new Date(), 'h:mm a')}</span>
-              </div>
-              <div className="border-b border-gray-100 pb-3 last:border-0">
-                <p className="text-sm text-gray-900">Medication administered as scheduled.</p>
-                <span className="text-xs text-gray-500">{format(new Date(Date.now() - 3600000), 'h:mm a')}</span>
-              </div>
+              {notes.length === 0 ? (
+                <div className="text-sm text-gray-600">No notes recorded today</div>
+              ) : (
+                notes.slice(0, 2).map(note => (
+                  <div key={note.id} className="border-b border-gray-100 pb-3 last:border-0">
+                    <p className="text-sm text-gray-900">{note.content}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-gray-500">{format(note.timestamp, 'MMM d, yyyy')}</span>
+                      <span className="text-xs text-gray-300">•</span>
+                      <span className="text-xs text-gray-500">{format(note.timestamp, 'h:mm a')}</span>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
