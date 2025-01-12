@@ -6,6 +6,8 @@ import { format } from 'date-fns'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ProfileData } from '@/app/types'
 import { getProfiles } from '../../../../lib/profiles'
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function ClientProfilePage() {
   const params = useParams()
@@ -54,11 +56,24 @@ export default function ClientProfilePage() {
       <div className="grid grid-cols-2 gap-6">
         {/* Daily Notes Card */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg">Daily Notes</CardTitle>
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/dashboard/clients/${params.id}/notes`}>View All Notes</Link>
+            </Button>
           </CardHeader>
           <CardContent>
-            <div className="text-sm text-gray-600">No notes recorded today</div>
+            <div className="space-y-4">
+              {/* Example Note - Will be replaced with real data */}
+              <div className="border-b border-gray-100 pb-3 last:border-0">
+                <p className="text-sm text-gray-900">Completed morning routine assessment.</p>
+                <span className="text-xs text-gray-500">{format(new Date(), 'h:mm a')}</span>
+              </div>
+              <div className="border-b border-gray-100 pb-3 last:border-0">
+                <p className="text-sm text-gray-900">Medication administered as scheduled.</p>
+                <span className="text-xs text-gray-500">{format(new Date(Date.now() - 3600000), 'h:mm a')}</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
