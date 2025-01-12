@@ -1,7 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { Bell, User, LogOut, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -11,8 +13,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { supabase } from '@/lib/supabase'
 
 export default function Header() {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleLogout = async () => {
+    try {
+      setIsLoading(true)
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      router.push('/login')
+    } catch (error) {
+      console.error('Error logging out:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <header className="bg-white border-b border-amber-100 shadow-sm">
       <div className="flex items-center justify-between px-6 py-4">
@@ -39,9 +58,13 @@ export default function Header() {
                   <span>Visit Homepage</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-red-600">
+              <DropdownMenuItem 
+                onClick={handleLogout} 
+                className="text-red-600"
+                disabled={isLoading}
+              >
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+                <span>{isLoading ? 'Logging out...' : 'Log out'}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
